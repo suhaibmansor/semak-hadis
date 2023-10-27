@@ -1,9 +1,35 @@
 import Link from 'next/link'
 
 import { siteConfig } from '@/config/site'
+import { getHadis, getHadisFacets } from '@/lib/searchClient'
 import { buttonVariants } from '@/components/ui/button'
 
-export default function IndexPage() {
+import QuickSearch from '@/components/quick-search'
+import HadisListView from '@/components/hadis-list-view'
+
+export const dynamic = 'force-dynamic'
+
+interface PageProps {
+  params: {}
+  searchParams: {}
+}
+
+export default async function IndexPage({ searchParams }: PageProps) {
+  const filter =
+    Object.keys(searchParams).length !== 0
+      ? Object.entries(searchParams)
+          .map(([key, val]) => `${key}='${val}'`)
+          .join(' AND ')
+      : ''
+  const { hits, facetDistribution } = await getHadis('', filter)
+  const { facetHits } = await getHadisFacets('', 'reff')
+  // console.log(facets)
+  // if (Object.keys(searchParams).length !== 0) {
+  //   const filter = Object.entries(searchParams)
+  //     .map(([key, val]) => `${key}='${val}'`)
+  //     .join(' AND ')
+  //   console.log(filter)
+  // }
   return (
     <section className='container grid items-center gap-6 pb-8 pt-6 md:py-10'>
       <div className='flex max-w-[980px] flex-col items-start gap-2'>
@@ -17,14 +43,7 @@ export default function IndexPage() {
         </p>
       </div>
       <div className='flex gap-4'>
-        <Link
-          href={siteConfig.links.docs}
-          target='_blank'
-          rel='noreferrer'
-          className={buttonVariants()}
-        >
-          Documentation
-        </Link>
+        <QuickSearch />
         <Link
           target='_blank'
           rel='noreferrer'
@@ -34,6 +53,11 @@ export default function IndexPage() {
           GitHub
         </Link>
       </div>
+      <HadisListView
+        searchResults={hits}
+        facetDistribution={facetDistribution}
+        facets={facetHits}
+      />
     </section>
   )
 }
