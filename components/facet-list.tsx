@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/card'
 
 import { Checkbox } from '@/components/ui/checkbox'
-// import { Badge } from '@/components/ui/badge'
 interface FacetProps {
   name: string
   count: number
@@ -52,7 +51,7 @@ export default function FacetList({ facets, facetDistribution }: Props) {
     },
     [searchParams]
   )
-  console.log(searchParams.get('reff'))
+  // console.log(searchParams.get('reff'))
   return (
     <Card>
       <CardHeader>
