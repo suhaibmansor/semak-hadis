@@ -1,7 +1,8 @@
 import Link from 'next/link'
 
 import { siteConfig } from '@/config/site'
-import { getHadis, getHadisFacets } from '@/lib/searchClient'
+import { getHadis, getHadisFacets, getDocDetails } from '@/lib/searchClient'
+import { usePagination } from '@/lib/computePaging'
 import { buttonVariants } from '@/components/ui/button'
 
 import QuickSearch from '@/components/quick-search'
@@ -15,6 +16,7 @@ interface PageProps {
 }
 
 export default async function IndexPage({ searchParams }: PageProps) {
+  const query: any = searchParams.q || ''
   const filter =
     Object.keys(searchParams).length !== 0
       ? Object.entries(searchParams)
@@ -22,10 +24,19 @@ export default async function IndexPage({ searchParams }: PageProps) {
           .map(([key, val]) => `${key}='${val}'`)
           .join(' AND ')
       : ''
-  const query: any = searchParams.q || ''
-  const { hits, facetDistribution } = await getHadis(query, filter)
+  const { hits, facetDistribution, processingTimeMs, limit, offset } =
+    await getHadis(query, filter)
   const { facetHits } = await getHadisFacets('', 'reff')
-
+  const { total } = await getDocDetails()
+  //const totalPageCount = Math.ceil(total / limit)
+  // const rr = {total,limit,}
+  const pagingItm = usePagination({
+    totalCount: total,
+    pageSize: 20,
+    currentPage: 1,
+    siblingCount: 1,
+  })
+  const searchInfo = { limit, offset, processingTimeMs, total }
   return (
     <section className='container grid items-center gap-6 pb-8 pt-6 md:py-10'>
       <div className='flex max-w-[980px] flex-col items-start gap-2'>
@@ -56,6 +67,8 @@ export default async function IndexPage({ searchParams }: PageProps) {
         searchResults={hits}
         facetDistribution={facetDistribution}
         facets={facetHits}
+        pagingItm={pagingItm}
+        searchInfo={searchInfo}
       />
     </section>
   )
