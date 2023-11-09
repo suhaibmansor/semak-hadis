@@ -29,9 +29,9 @@ function convertToObj(facet: Record<string, number>): FacetProps[] {
 }
 
 export default function FacetList({ facets, facetDistribution }: Props) {
-  // console.log(facets)
+  console.log(facets)
   // console.log(facetDistribution)
-  const reffFacet = convertToObj(facetDistribution.reff)
+  // const reffFacet = convertToObj(facetDistribution.reff)
   // const facetReff = facets.slice().sort((a, b) => b.count - a.count)
   const statFacet = convertToObj(facetDistribution.status)
   const router = useRouter()
@@ -49,40 +49,61 @@ export default function FacetList({ facets, facetDistribution }: Props) {
       // console.log(params)
       return params.toString()
     },
-    [searchParams]
+    [searchParams],
   )
   // console.log(searchParams.get('reff'))
   return (
     <Card>
       <CardHeader>
         <CardTitle>Glosari</CardTitle>
-        <CardDescription>Card Description</CardDescription>
+        <CardDescription>
+          Pilih <span className='font-bold'>Pengakaji </span> dan{' '}
+          <span className='font-bold'>Status</span> untuk mengecilkan carian.
+        </CardDescription>
       </CardHeader>
       <CardContent className='space-y-7'>
         <div>
           <div className='flex justify-between'>
             <p>Pengkaji</p>
-            <p>{reffFacet.length}</p>
+            {/* <p>{reffFacet.length}</p> */}
+            <p>{facets.length}</p>
           </div>
-
-          {reffFacet.map((itm, idx) => (
+          {facets.map((itm, idx) => (
             <div className='flex items-start space-x-2 my-2 text-sm' key={idx}>
               <Checkbox
-                checked={itm.name === searchParams.get('reff')}
+                checked={itm.value === searchParams.get('reff')}
                 onCheckedChange={(checked) =>
                   //console.log(typeof checked)
                   router.push(
                     pathname +
                       '?' +
-                      createQueryString('reff', itm.name, checked as boolean)
+                      createQueryString('reff', itm.value, checked as boolean),
                   )
                 }
               />
 
-              <p className='grow truncate leading-none'>{itm.name}</p>
-              <p className='flex-none font-bold leading-none'>{itm.count}</p>
+              <p className='grow truncate leading-none'>{itm.value}</p>
+              {/* <p className='flex-none font-bold leading-none'>{itm.count}</p> */}
             </div>
           ))}
+          {/* {reffFacet.map((itm, idx) => ( */}
+          {/*   <div className='flex items-start space-x-2 my-2 text-sm' key={idx}> */}
+          {/*     <Checkbox */}
+          {/*       checked={itm.name === searchParams.get('reff')} */}
+          {/*       onCheckedChange={(checked) => */}
+          {/*         //console.log(typeof checked) */}
+          {/*         router.push( */}
+          {/*           pathname + */}
+          {/*             '?' + */}
+          {/*             createQueryString('reff', itm.name, checked as boolean), */}
+          {/*         ) */}
+          {/*       } */}
+          {/*     /> */}
+
+          {/*     <p className='grow truncate leading-none'>{itm.name}</p> */}
+          {/*     <p className='flex-none font-bold leading-none'>{itm.count}</p> */}
+          {/*   </div> */}
+          {/* ))} */}
         </div>
         <div>
           <p>Status</p>
@@ -95,7 +116,7 @@ export default function FacetList({ facets, facetDistribution }: Props) {
                   router.push(
                     pathname +
                       '?' +
-                      createQueryString('status', itm.name, checked as boolean)
+                      createQueryString('status', itm.name, checked as boolean),
                   )
                 }
               />

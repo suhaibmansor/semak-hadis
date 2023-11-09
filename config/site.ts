@@ -9,6 +9,14 @@ export const siteConfig = {
       title: 'Home',
       href: '/',
     },
+    {
+      title: 'Semak',
+      href: '/semak',
+    },
+    {
+      title: 'SemakEnd',
+      href: '/semak#hadisList',
+    },
   ],
   links: {
     twitter: 'https://twitter.com/shadcn',

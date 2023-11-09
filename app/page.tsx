@@ -8,15 +8,16 @@ import { buttonVariants } from '@/components/ui/button'
 import QuickSearch from '@/components/quick-search'
 import HadisListView from '@/components/hadis-list-view'
 
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 
 interface PageProps {
   params: {}
-  searchParams: { q?: string; reff?: string; status?: string }
+  searchParams: { q?: string; reff?: string; status?: string; page?: number }
 }
 
 export default async function IndexPage({ searchParams }: PageProps) {
-  const query: any = searchParams.q || ''
+  const query: any = searchParams.q || '*'
+  const currentPage: number = searchParams.page || 1
   const filter =
     Object.keys(searchParams).length !== 0
       ? Object.entries(searchParams)
@@ -24,19 +25,37 @@ export default async function IndexPage({ searchParams }: PageProps) {
           .map(([key, val]) => `${key}='${val}'`)
           .join(' AND ')
       : ''
-  const { hits, facetDistribution, processingTimeMs, limit, offset } =
-    await getHadis(query, filter)
+  const {
+    hits,
+    facetDistribution,
+    processingTimeMs,
+    hitsPerPage,
+    totalHits,
+    page,
+  } = await getHadis(query, currentPage, filter)
+
   const { facetHits } = await getHadisFacets('', 'reff')
   const { total } = await getDocDetails()
-  //const totalPageCount = Math.ceil(total / limit)
-  // const rr = {total,limit,}
-  const pagingItm = usePagination({
-    totalCount: total,
-    pageSize: 20,
-    currentPage: 1,
-    siblingCount: 1,
-  })
-  const searchInfo = { limit, offset, processingTimeMs, total }
+
+  const pagingItm =
+    Object.keys(searchParams).length !== 0
+      ? usePagination({
+          totalCount: totalHits,
+          pageSize: hitsPerPage,
+          currentPage: page,
+          siblingCount: 1,
+        })
+      : []
+  // console.log(rest)
+  const searchInfo =
+    Object.keys(searchParams).length !== 0
+      ? {
+          currentPage: page,
+          processingTimeMs,
+          total: totalHits,
+          query: searchParams.q,
+        }
+      : {}
   return (
     <section className='container grid items-center gap-6 pb-8 pt-6 md:py-10'>
       <div className='flex max-w-[980px] flex-col items-start gap-2'>
@@ -47,8 +66,8 @@ export default async function IndexPage({ searchParams }: PageProps) {
         </h1>
         <div className='max-w-[700px] flex items-center'>
           <p className='text-lg text-muted-foreground'>
-            Lebih dari 14000 hadis dikumpulkan dari pelbagai karya pengkaji
-            hadis untuk anda membuat semakan.
+            {total} hadis telah dikumpulkan dari pelbagai karya pengkaji hadis
+            untuk anda membuat semakan.
           </p>
         </div>
       </div>

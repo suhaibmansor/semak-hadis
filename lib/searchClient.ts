@@ -4,23 +4,26 @@ const index = meilisearchClient.getIndex('hadis')
 
 export async function getHadis(
   textSearch: string,
-  filter?: string
+  currentPage: number,
+  filter?: string,
 ): Promise<any> {
+  // console.log(filter)
   const search = await index.search(textSearch, {
-    // const search = await index.getDocument(textSearch, {
     filter: filter,
-    // attributesToHighlight: ['*'],
-    hitsPerPage: 25,
-    page: 39,
+    attributesToHighlight: ['*'],
+    highlightPreTag: '**',
+    highlightPostTag: '**',
+    hitsPerPage: 20,
+    page: currentPage,
     facets: ['status', 'reff'],
   })
-  console.log(search)
+  // console.log(search)
   return search
 }
 
 export async function getHadisFacets(
   textSearch: string,
-  facetName: string
+  facetName: string,
 ): Promise<any> {
   const search = await index.searchForFacetValues({
     facetQuery: textSearch,

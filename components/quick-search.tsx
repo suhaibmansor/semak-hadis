@@ -4,7 +4,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useDebounce } from 'use-debounce'
 
 import { Input } from '@/components/ui/input'
-import { Button, buttonVariants } from './ui/button'
+import { Button } from '@/components/ui/button'
 import { Search } from 'lucide-react'
 export default function QuickSearchComp() {
   const [textVal, setTextVal] = useState('')
@@ -21,9 +21,10 @@ export default function QuickSearchComp() {
       } else {
         params.set(name, value)
       }
+      params.delete('page')
       return params.toString()
     },
-    [searchParams]
+    [searchParams],
   )
   useEffect(() => {
     router.push(pathname + '?' + createQueryString('q', query))
@@ -36,7 +37,7 @@ export default function QuickSearchComp() {
         placeholder='Cari hadis...'
         onChange={(e) => setTextVal(e.target.value)}
       ></Input>
-      <Button type='submit' className={buttonVariants()}>
+      <Button type='submit'>
         <Search className='mr-2 h-4 w-4' />
         Cari
       </Button>
