@@ -1,19 +1,14 @@
-import Link from 'next/link'
+import Balancer from 'react-wrap-balancer'
+import Markdown from 'react-markdown'
 
-import { siteConfig } from '@/config/site'
 import { getHadis, getHadisFacets, getDocDetails } from '@/lib/searchClient'
 import { usePagination } from '@/lib/computePaging'
-import { cn } from '@/lib/utils'
 
-import { buttonVariants } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import QuickSearch from '@/components/quick-search'
 import SideFacet from '@/components/side-facet'
 import PagingBar from '@/components/paging-bar'
 
-import { ChevronRight } from 'lucide-react'
-
-import Balancer from 'react-wrap-balancer'
 import {
   Card,
   CardContent,
@@ -27,6 +22,7 @@ interface PageProps {
   params: {}
   searchParams: { q?: string; reff?: string; status?: string; page?: string }
 }
+
 // export const dynamic = 'force-dynamic'
 export default async function SemakPage({ searchParams }: PageProps) {
   const query: any = searchParams.q || '*'
@@ -73,7 +69,7 @@ export default async function SemakPage({ searchParams }: PageProps) {
           query: searchParams.q,
         }
       : {}
-  console.log(searchParams)
+  // console.log(searchParams)
   return (
     <>
       <aside className='fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block'>
@@ -126,13 +122,43 @@ export default async function SemakPage({ searchParams }: PageProps) {
               {hits.map((itm: any) => (
                 <Card key={itm.id}>
                   <CardHeader>
-                    <CardTitle>
-                      <Balancer>{itm.title}</Balancer>
+                    <CardTitle className='leading-normal'>
+                      <Balancer>
+                        <Markdown
+                          components={{
+                            strong(props) {
+                              const { node, ...rest } = props
+                              return (
+                                <strong
+                                  className='px-0.5 rounded bg-muted-foreground text-muted'
+                                  {...rest}
+                                />
+                              )
+                            },
+                          }}
+                        >
+                          {itm._formatted.title}
+                        </Markdown>
+                      </Balancer>
                     </CardTitle>
                     <CardDescription>{itm.textArab}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p>{itm._formatted.commentBody}</p>
+                    <Markdown
+                      components={{
+                        strong(props) {
+                          const { node, ...rest } = props
+                          return (
+                            <strong
+                              className='px-1 rounded bg-muted-foreground text-muted'
+                              {...rest}
+                            />
+                          )
+                        },
+                      }}
+                    >
+                      {itm._formatted.commentBody}
+                    </Markdown>
                   </CardContent>
                   <CardFooter>
                     <p>{itm.status}</p>

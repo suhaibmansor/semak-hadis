@@ -48,7 +48,7 @@ export default function SideFacet({ facet, facetDist }: Props) {
         <h4 className='mb-1 rounded-md py-1 text-md font-semibold'>Pengkaji</h4>
 
         {reffFacet.map((itm, idx) => (
-          <div key={idx} className='flex items-start space-x-2 my-2 text-sm'>
+          <div key={idx} className='flex items-center space-x-2 my-2 text-sm'>
             <Checkbox
               checked={itm.name === searchParams.get('reff')}
               onCheckedChange={(checked) =>
@@ -59,13 +59,13 @@ export default function SideFacet({ facet, facetDist }: Props) {
                 )
               }
             />
-            <p className='grow truncate leading-none'>{itm.name}</p>
+            <p className='line-clamp-2'>{itm.name}</p>
             {/* <p className='flex-none font-bold leading-none'>{itm.count}</p> */}
           </div>
         ))}
         <h4 className='mb-1 rounded-md py-1 text-md font-semibold'>Status</h4>
         {statFacet.map((itm, idx) => (
-          <div key={idx} className='flex items-start space-x-2 my-2 text-sm'>
+          <div key={idx} className='flex items-center space-x-2 my-2 text-sm'>
             <Checkbox
               checked={itm.name === searchParams.get('status')}
               onCheckedChange={(checked) =>
@@ -76,7 +76,7 @@ export default function SideFacet({ facet, facetDist }: Props) {
                 )
               }
             />
-            <p className='leading-none'>{itm.name}</p>
+            <p className='line-clamp-1 '>{itm.name}</p>
             {/* <p className='flex-none font-bold leading-none'>{itm.count}</p> */}
           </div>
         ))}
